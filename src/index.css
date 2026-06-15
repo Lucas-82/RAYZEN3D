@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Grotesk", "Inter", ui-sans-serif, sans-serif;
+  --font-display: "Orbitron", sans-serif;
+  --font-serif: "Orbitron", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-indigo-50: #f4f4f5;
+  --color-indigo-100: #e4e4e7;
+  --color-indigo-200: #d4d4d8;
+  --color-indigo-400: #71717a;
+  --color-indigo-500: #27272a;
+  --color-indigo-505: #27272a;
+  --color-indigo-600: #18181b;
+  --color-indigo-650: #18181b;
+  --color-indigo-700: #09090b;
+  --color-indigo-950: #09090b;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #fafafa;
+  color: #171717;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--font-display), var(--font-sans);
+}
+
+.font-serif {
+  font-family: var(--font-serif), serif;
+}
+
+.font-mono {
+  font-family: var(--font-mono), monospace;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e5e5e5;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4d4d4;
+}
