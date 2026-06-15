@@ -33,6 +33,7 @@ import ProductDetailModal from "./components/ProductDetailModal";
 import CartDrawer from "./components/CartDrawer";
 import SheetsHelpModal from "./components/SheetsHelpModal";
 import { RayzenLogo } from "./components/RayzenLogo";
+import HeroSlider from "./components/HeroSlider";
 
 
 export default function App() {
@@ -239,7 +240,11 @@ export default function App() {
 
     const matchesType =
       selectedTypeFilter === "Todo" ||
-      (p.type && p.type.toLowerCase() === selectedTypeFilter.toLowerCase());
+      (p.type &&
+        p.type
+          .split(",")
+          .map((t) => t.trim().toLowerCase())
+          .includes(selectedTypeFilter.toLowerCase()));
 
     return matchesSearch && matchesColor && matchesType;
   });
@@ -249,10 +254,23 @@ export default function App() {
     new Set(products.flatMap((p) => p.colors))
   ).filter(Boolean);
 
-  // Calculate unique categories (TIPO) in currently loaded catalog for filtering
+  // Calculate unique categories (TIPO) in currently loaded catalog for filtering, splitting by comma and sorting "Otros" last
   const allUniqueTypes = Array.from(
-    new Set(products.map((p) => p.type || "Otros"))
-  ).filter(Boolean).sort() as string[];
+    new Set(
+      products.flatMap((p) => {
+        const t = p.type || "Otros";
+        return t.split(",").map((s) => s.trim());
+      })
+    )
+  )
+    .filter(Boolean)
+    .sort((a, b) => {
+      const strA = a as string;
+      const strB = b as string;
+      if (strA.toLowerCase() === "otros") return 1;
+      if (strB.toLowerCase() === "otros") return -1;
+      return strA.localeCompare(strB);
+    }) as string[];
 
   const cartItemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -399,40 +417,8 @@ export default function App() {
         </section>
       )}
 
-      {/* 3. Hero Showcase Panel */}
-      <section className="relative overflow-hidden bg-gray-950 text-white min-h-[320px] md:min-h-[360px] flex items-center justify-center">
-        {/* Blurred company logo background watermark */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden">
-          <img
-            src="/src/assets/images/rayzen3d_logo_banner_1779825366981.png"
-            alt=""
-            className="w-[85%] max-w-4xl h-auto object-contain opacity-20 filter invert brightness-200 blur-2xl select-none pointer-events-none"
-            referrerPolicy="no-referrer"
-          />
-          {/* Elegant geometric gradient masking */}
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-950/40 to-transparent" />
-        </div>
-
-        {/* Centered content layout */}
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14 flex flex-col items-center text-center w-full h-full">
-          <div className="flex flex-col items-center">
-            {/* Tag lines */}
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 px-3.5 py-1 text-xs font-bold text-indigo-400 mb-4">
-              <Sparkles size={13} />
-              ACCESORIOS | DECORACIÓN | DISEÑO3D
-            </span>
-
-            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight leading-none mb-4">
-              Imagina en 3D,<br />
-              Nosotros lo <span className="text-indigo-400 font-serif lowercase italic font-normal tracking-wide">imprimimos</span>
-            </h1>
-
-            <p className="text-gray-300 text-sm md:text-base leading-relaxed max-w-xl">
-              Creamos figuras articuladas de colección, objetos decorativos, organizadores ingeniosos y prototipos de ingeniería resistentes utilizando materiales ecológicos biodegradables de altísima fidelidad.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* 3. Hero Showcase Slider */}
+      <HeroSlider />
 
       {/* 4. Active Catalog Interface */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
@@ -544,7 +530,12 @@ export default function App() {
 
                 {/* Unique category types */}
                 {allUniqueTypes.map((type) => {
-                  const count = products.filter((p) => (p.type || "Otros").toLowerCase() === type.toLowerCase()).length;
+                  const count = products.filter((p) => {
+                    const productTypes = (p.type || "Otros")
+                      .split(",")
+                      .map((t) => t.trim().toLowerCase());
+                    return productTypes.includes(type.toLowerCase());
+                  }).length;
                   return (
                     <button
                       key={type}

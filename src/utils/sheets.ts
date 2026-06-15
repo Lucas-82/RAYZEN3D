@@ -180,8 +180,18 @@ export async function fetchProductsFromSheets(
     const rawType = getVal(7);
     let type = "Otros";
     if (rawType !== null && String(rawType).trim() !== "") {
-      const trimmed = String(rawType).trim();
-      type = trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+      type = String(rawType)
+        .split(",")
+        .map((t) => {
+          const trimmed = t.trim();
+          if (!trimmed) return "";
+          return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+        })
+        .filter(Boolean)
+        .join(", ");
+    }
+    if (!type) {
+      type = "Otros";
     }
 
     parsedProducts.push({
